@@ -11,7 +11,7 @@ class NewExpense extends StatefulWidget {
 }
 
 class _NewExpenseState extends State<NewExpense> {
-  final _textController = TextEditingController();
+  final _titleController = TextEditingController();
   final _amountController = TextEditingController();
   DateTime? _selectedDate;
   Category _selectedCategory = Category.leisure;
@@ -30,9 +30,19 @@ class _NewExpenseState extends State<NewExpense> {
     });
   }
 
+  void _submitExpenseData() {
+    final enteredAmount = double.tryParse(_amountController.text);
+    final amountIsInvalid = enteredAmount == null || enteredAmount <= 0;
+    if (_titleController.text.trim().isEmpty ||
+        amountIsInvalid ||
+        _selectedDate == null) {
+      //show error message
+    }
+  }
+
   @override
   void dispose() {
-    _textController.dispose();
+    _titleController.dispose();
     _amountController.dispose();
     super.dispose();
   }
@@ -44,7 +54,7 @@ class _NewExpenseState extends State<NewExpense> {
       child: Column(
         children: [
           TextField(
-            controller: _textController,
+            controller: _titleController,
             maxLength: 50,
             decoration: const InputDecoration(
               label: Text('Title'),
@@ -82,21 +92,25 @@ class _NewExpenseState extends State<NewExpense> {
               ),
             ],
           ),
-          const SizedBox(height: 16,),
+          const SizedBox(
+            height: 16,
+          ),
           Row(
             children: [
               DropdownButton(
                   value: _selectedCategory,
-                  items: Category.values.map(
-                    (category) => DropdownMenuItem(
-                      value: category,
-                      child: Text(
-                        category.name.toUpperCase(),
-                      ),
-                    ),
-                  ).toList(),
+                  items: Category.values
+                      .map(
+                        (category) => DropdownMenuItem(
+                          value: category,
+                          child: Text(
+                            category.name.toUpperCase(),
+                          ),
+                        ),
+                      )
+                      .toList(),
                   onChanged: (value) {
-                    if(value == null) {
+                    if (value == null) {
                       return;
                     }
                     setState(() {
@@ -111,10 +125,7 @@ class _NewExpenseState extends State<NewExpense> {
                 child: const Text('Cancel'),
               ),
               ElevatedButton(
-                onPressed: () {
-                  print(_textController.text);
-                  print(_amountController.text);
-                },
+                onPressed: _submitExpenseData,
                 child: const Text('Save Expense'),
               ),
             ],

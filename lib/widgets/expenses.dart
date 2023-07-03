@@ -37,7 +37,7 @@ class _ExpensesState extends State<Expenses> {
 
   void _addExpense(Expense expense) {
     setState(() {
-    _registeredExpenses.add(expense);
+      _registeredExpenses.add(expense);
     });
   }
 
@@ -57,16 +57,22 @@ class _ExpensesState extends State<Expenses> {
               _registeredExpenses.insert(expenseIndex, expense);
             });
           },
-          ),
-      ),);
+        ),
+      ),
+    );
   }
 
   @override
   Widget build(BuildContext context) {
-      Widget mainContent = const Center(child: Text('No expenses found. Start Adding some!'),);
+    final width = MediaQuery.of(context).size.width;
 
-    if(_registeredExpenses.isNotEmpty) {
-      mainContent = ExpensesList(expenses: _registeredExpenses, onRemoveExpense: _removeExpense);
+    Widget mainContent = const Center(
+      child: Text('No expenses found. Start Adding some!'),
+    );
+
+    if (_registeredExpenses.isNotEmpty) {
+      mainContent = ExpensesList(
+          expenses: _registeredExpenses, onRemoveExpense: _removeExpense);
     }
 
     return Scaffold(
@@ -79,14 +85,25 @@ class _ExpensesState extends State<Expenses> {
           ),
         ],
       ),
-      body: Column(
-        children: [
-          Chart(expenses: _registeredExpenses),
-          Expanded(
-            child: mainContent,
-          ),
-        ],
-      ),
+      body: width < 600
+          ? Column(
+              children: [
+                Chart(expenses: _registeredExpenses),
+                Expanded(
+                  child: mainContent,
+                ),
+              ],
+            )
+          : Row(
+              children: [
+                Expanded(
+                  child: Chart(expenses: _registeredExpenses),
+                ),
+                Expanded(
+                  child: mainContent,
+                ),
+              ],
+            ),
     );
   }
 }
